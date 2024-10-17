@@ -2,7 +2,7 @@
 
 ---------------------------------------------------------------
 
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/epiforecasts/EpiNow2/blob/main/LICENSE.md/)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dsih-artpark/vaxsim/blob/production/LICENSE)
 
 *VaxSim* is a python package for simulating the spread of Foot and Mouth Disease (FMD) using a discrete compartmental model (SIRSV framework), along with control interventions such as periodic pulsed vaccination campaigns.
 
