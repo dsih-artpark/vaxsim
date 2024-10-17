@@ -39,7 +39,7 @@ flowchart LR;
 |---------------|----------------------------------------------------------------------|--------------|----------|----------|------------------|-----------------------------------|
 | $\beta$       | Transmission rate                                                   | 0.12         | 1e-06    | -        | days<sup>-1</sup>| model fit                        |
 | $\gamma$      | Recovery rate                                                       | 0.07         | 0.065    | 0.122    | days<sup>-1</sup>| [Yadav et al. (2019)](https://doi.org/10.3389/fvets.2019.00263) |
-| $\mu$         | Effective vaccination rate                                          | 0.016        | 1e-06    | 0.3333   | days<sup>-1</sup>| model fit                        |
+| $\mu$         | Effective vaccination rate                                          | 0.016        | 1e-06    | 1   | days<sup>-1</sup>| model fit                        |
 | $\lambda_{\text{vax}}$ | Scale parameter for immunity decay in vaccinated individuals | 160          | 120      | 180      | days             | [Singh et al. (2019)](https://doi.org/10.3390/vaccines7030090)  |
 | $k_{\text{vax}}$ | Shape parameter for immunity decay in vaccinated individuals      | 3            | 1        | 6        | -                | model fit                        |
 | $\lambda_{\text{rec}}$ | Scale parameter for immunity decay in recovered individuals  | 1380         | 365      | 1800     | days             | [Pomeroy et al. (2015)](https://doi.org/10.1371/journal.pone.0136642) |
