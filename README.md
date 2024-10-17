@@ -104,5 +104,5 @@ Logs are created in the *`output/logs`* directory with filenames indicating the 
 ### Contributing
 Contributions to improve the model, enhance functionalities, or fix issues are welcome. Please fork the repository and submit a pull request with your changes.
 
-### Licence
+### License
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/dsih-artpark/vaxsim/blob/production/LICENSE) file for details.
