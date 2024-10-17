@@ -14,6 +14,24 @@ You can install vaxsim using [Poetry](https://python-poetry.org/) by running the
 poetry add git+https://github.com/dsih-artpark/vaxsim.git
 ```
 -------------
+### Model Description
+The SIRSV model is an epidemiological framework designed to simulate the spread of infectious diseases, with a particular focus on Foot and Mouth Disease (FMD). This model expands upon the classical SIR (Susceptible-Infectious-Recovered) framework by introducing a fourth compartment for vaccinated individuals (V), thereby considering the effects of vaccination and immunity waning on disease transmission dynamics. Unlike traditional compartmental models, this approach allows for the re-vaccination of previously vaccinated individuals during each round, while systematically tracking the immunity decay time of each individual in vaccinated state.
+
+```mermaid
+flowchart LR;
+
+  S["S"]
+  I["I"]
+  R["R"]
+  V["V"]
+  S --> I
+  I --> R
+  R --> S
+  S --> V
+  V --> S
+
+```
+
 
 ### Model Parameters
 
@@ -71,6 +89,11 @@ List of scenarios are given below:
 | scenario_4d    | Disease-free state with continuous vaccination and 0.5/365 daily coverage; Vacc starts from Day 1. |
 | sweep          | Parameter sweep |
 
+There are two model types, each based on distinct assumptions regarding the vaccination approach:
+
+1. **Random Vaccination Campaign:** In this model, previously vaccinated animals are selected randomly, and their time to immunity decay is updated according to a Weibull distribution.
+
+2. **Targeted Vaccination Campaign:** This model involves selecting previously vaccinated animals in ascending order of their time to immunity decay until the vaccination coverage for that round is achieved. Their time to immunity decay is also updated based on a Weibull distribution.
 
 ### Output
 The results of the simulations, including log files and visualisations, will be saved in the *`output`*  directory. Check the relevant subdirectories for logs and plots corresponding to each simulation run.
