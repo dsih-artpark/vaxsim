@@ -158,9 +158,6 @@ def run_parameter_sweep(sirsv_model, base_params, param1_name, param1_range, par
                         diagonal=False, analysis_function='auc', model_type='random'):
     results = []
 
-    # sirsv_model = (sirsv_model_with_weibull_targetted_vaccination if model_type == 'targetted'
-    #                             else sirsv_model_with_weibull_random_vaccination)
-
     # Function mapping for analysis type
     analysis_func = auc_below_threshold if analysis_function == 'auc' else equilibrium_min_protected_fraction
 

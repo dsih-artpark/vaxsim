@@ -11,7 +11,7 @@ import platform
 import sys
 from datetime import datetime
 
-from model import sirsv_model_with_weibull_random_vaccination, sirsv_model_with_weibull_targetted_vaccination
+from model import sirsv_model_with_weibull_random_vaccination, sirsv_model_with_weibull_targeted_vaccination
 from plot import plot_parameter_sweep, plot_waning, plot_model
 from utils import analyse_scenarios, run_parameter_sweep
 
@@ -41,7 +41,7 @@ def main():
                         default="baseline",
                         help="Select the scenario to run")
 
-    parser.add_argument("--model_type", nargs='*', choices=["targetted", "random"], default=["random"],
+    parser.add_argument("--model_type", nargs='*', choices=["targeted", "random"], default=["random"],
                         help="Select the model type to run. Multiple choices allowed. Default is 'random'.")
 
     args = parser.parse_args()
@@ -63,8 +63,8 @@ def main():
         if args.scenario == "parameter_sweep":
 
             for model in args.model_type:
-                if model == "targetted":
-                    sirsv_model = sirsv_model_with_weibull_targetted_vaccination
+                if model == "targeted":
+                    sirsv_model = sirsv_model_with_weibull_targeted_vaccination
                 elif model == 'random':
                     sirsv_model = sirsv_model_with_weibull_random_vaccination
 
@@ -80,8 +80,8 @@ def main():
             Path(output_dir).mkdir(parents=True, exist_ok=True)
 
             for model in args.model_type:
-                if model == "targetted":
-                    sirsv_model = sirsv_model_with_weibull_targetted_vaccination
+                if model == "targeted":
+                    sirsv_model = sirsv_model_with_weibull_targeted_vaccination
                 elif model == 'random':
                     sirsv_model = sirsv_model_with_weibull_random_vaccination
 
@@ -93,8 +93,8 @@ def main():
             logging.info(f"Scenario parameters: {scenario_params}")
 
             for model in args.model_type:
-                if model == "targetted":
-                    sirsv_model = sirsv_model_with_weibull_targetted_vaccination
+                if model == "targeted":
+                    sirsv_model = sirsv_model_with_weibull_targeted_vaccination
                 elif model == 'random':
                     sirsv_model = sirsv_model_with_weibull_random_vaccination
 

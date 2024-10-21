@@ -154,7 +154,7 @@ def sirsv_model_with_weibull_random_vaccination(params, scenario, random_seed=42
     return S, I, R, V
 
 
-def sirsv_model_with_weibull_targetted_vaccination(params, scenario, random_seed=42, diagnosis=None):
+def sirsv_model_with_weibull_targeted_vaccination(params, scenario, random_seed=42, diagnosis=None):
     np.random.seed(random_seed)
     random.seed(random_seed)
 
