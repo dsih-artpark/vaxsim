@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "fmd-sirsv"
+name = "vaxsim"
 version = "0.1.0"
-description = "sirsv model with immunity waning for FMD disease"
+description = "vaxsim is a python package for simulating the spread of Foot and Mouth Disease (FMD) using a discrete compartmental model (SIRSV framework), along with control interventions such as periodic pulsed vaccination campaigns."
 authors = ["Adish"]
 readme = "README.md"
-package-mode = false
+package-mode = true
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -17,6 +17,7 @@ argparse = "^1.4.0"
 logging = "^0.4.9.6"
 tqdm = "^4.66.5"
 pathlib = "^1.0.1"
+pandas = "^2.2.3"
 
 [tool.poetry.group.dev.dependencies]
 pyaml = "^23.12.0"
@@ -24,5 +25,5 @@ math0 = "^1.1"
 SALib = "^1.4.8"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
