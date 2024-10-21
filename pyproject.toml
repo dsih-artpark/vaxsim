@@ -3,8 +3,8 @@ name = "vaxsim"
 version = "0.1.0"
 description = "vaxsim is a python package for simulating the spread of Foot and Mouth Disease (FMD) using a discrete compartmental model (SIRSV framework), along with control interventions such as periodic pulsed vaccination campaigns."
 authors = ["Adish"]
+license = "MIT"
 readme = "README.md"
-package-mode = true
 
 [tool.poetry.dependencies]
 python = "^3.11"
