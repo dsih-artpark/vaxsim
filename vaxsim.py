@@ -1,19 +1,18 @@
+import argparse
+import logging
+import os
+import platform
+import sys
 import warnings
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
 import yaml
-import argparse
-import logging
-import platform
-import sys
-import os
-from datetime import datetime
 
 from vaxsim.model import sirsv_model_with_weibull_random_vaccination, sirsv_model_with_weibull_targeted_vaccination
-from vaxsim.plot import plot_parameter_sweep, plot_waning, plot_model
+from vaxsim.plot import plot_model, plot_parameter_sweep, plot_waning
 from vaxsim.utils import analyse_scenarios, run_parameter_sweep
 
 logger = logging.getLogger("vaxsim.run")
@@ -39,7 +38,10 @@ def main():
     parser = argparse.ArgumentParser(description="Run Discrete SIRSV model simulations.")
 
     parser.add_argument("--scenario",
-                        choices=["baseline", "scenario_1a", "scenario_1b", "scenario_1c", "scenario_2a", "scenario_2b", "scenario_2c", "scenario_2d", "scenario_3a", "scenario_3b", "scenario_3c", "scenario_3d", "scenario_4a", "scenario_4b", "scenario_4c", "scenario_4d", "parameter_sweep", "run_scenarios"],
+                        choices=["baseline", "scenario_1a", "scenario_1b", "scenario_1c",
+                                "scenario_2a", "scenario_2b", "scenario_2c", "scenario_2d",
+                                "scenario_3a", "scenario_3b", "scenario_3c", "scenario_3d",
+                                "scenario_4a", "scenario_4b", "scenario_4c", "scenario_4d", "parameter_sweep", "run_scenarios"],
                         default="baseline",
                         help="Select the scenario to run")
 
@@ -49,7 +51,7 @@ def main():
     args = parser.parse_args()
 
     log_filename = f"output/logs/sirsv_model_{args.scenario}_{datetime.now().strftime('%Y%m%d_%H%M')}.log"
-    os.makedirs("output/logs/")
+    os.makedirs("output/logs/", exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',

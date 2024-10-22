@@ -1,7 +1,8 @@
+import os
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import os
 
 from vaxsim.utils import auc_below_threshold
 
@@ -18,7 +19,7 @@ def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, st
     plt.title(f'Decay Times for {scenario.capitalize()} - Round {round_counter} {"Beginning" if start else "End"}')
     plt.legend()
 
-    plt.text(0.95, 0.05, f"Vaccinated Count: {len(decay_times_vax)}", transform=plt.gca().transAxes, fontsize=10, horizontalalignment='center', bbox=dict(facecolor='white', alpha=0.5))
+    plt.text(0.95, 0.05, f"Vaccinated Count: {len(decay_times_vax)}", transform=plt.gca().transAxes, fontsize=10, horizontalalignment='center', bbox=dict(facecolor='white', alpha=0.5))  # noqa: E501
     file_path = f'{output_dir}/decay_times_{scenario}_round_{round_counter}_{"begin" if start else "end"}.png'
     plt.savefig(file_path)
     plt.close()

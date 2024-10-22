@@ -6,13 +6,25 @@
 
 *VaxSim* is a python package for simulating the spread of Foot and Mouth Disease (FMD) using a discrete compartmental model (SIRSV framework), along with control interventions such as periodic pulsed vaccination campaigns.
 
-Installation
--------------
-You can install vaxsim using [Poetry](https://python-poetry.org/) by running the following command:
+Installation & Usage
+---------------------
+
+You can clone vaxsim into your local environment and then install the dependencies using `poetry`. Make sure you have [Poetry](https://python-poetry.org/) installed first. You can find their official installer [here](https://python-poetry.org/docs/#installation).
 
 ```bash
-poetry add git+https://github.com/dsih-artpark/vaxsim.git
+git clone https://github.com/dsih-artpark/vaxsim.git
+cd vaxsim
+poetry install
 ```
+
+You can alternatively manage your venv using conda if you have it installed.
+```bash
+git clone https://github.com/dsih-artpark/vaxsim.git
+cd vaxsim
+conda create -n vaxsim_test python=3.11 -y
+poetry install
+```
+
 -------------
 ### Model Description
 The SIRSV model is an epidemiological framework designed to simulate the spread of infectious diseases, with a particular focus on Foot and Mouth Disease (FMD). This model expands upon the classical SIR (Susceptible-Infectious-Recovered) framework by introducing a fourth compartment for vaccinated individuals (V), thereby considering the effects of vaccination and immunity waning on disease transmission dynamics. Unlike traditional compartmental models, this approach allows for the re-vaccination of previously vaccinated individuals during each round, while systematically tracking the immunity decay time of each individual in vaccinated state.
@@ -23,7 +35,6 @@ flowchart LR;
   S["S"]
   I["I"]
   R["R"]
-  V["V"]
   S --> I
   I --> R
   R --> S
@@ -56,19 +67,34 @@ flowchart LR;
 
 ### Running model scenarios
 
-Run the script from the command line as follows:
+1. Run the script from the command line as follows, using python or IPython. The package comes with IPython preinstalled.
+
+#### Python
 
 ```python3
-python run.py --scenario <scenario_name> --model_type <model_type>
+python vaxsim.py --scenario <scenario_name> --model_type <model_type>
+```
+#### IPython
+```
+ipython
+run vaxsim.py --scenario <scenario_name> --model_type <model_type>
 ```
 
-To run the baseline scenario with default model
+
+
+---
+
+1. To run the baseline scenario with default model. Read more in our [documentation](docs/).
 
 ```python3
-python run.py
+python vaxsim.py
 ```
+3. Adding and Running Custom Scenarios
+To configure your own custom run of the model, make changes to your local params.yaml file by adding a new scenario at the end of the file. 
+For e.g., you can create scenario_5a based on a new approach you'd like to experiment with.
+---
+4. List of provided scenarios are given below:
 
-List of scenarios are given below:
 | Scenario Name | Remarks |
 |----------------|---------|
 | baseline       | 2021 FMD outbreak |
