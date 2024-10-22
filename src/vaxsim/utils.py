@@ -1,12 +1,11 @@
+import logging
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
-import logging
-from tqdm import tqdm
 from scipy.integrate import simpson
+from tqdm import tqdm
 
 
 def auc_below_threshold(S, I, R, V, days, herd_threshold=0.4):
@@ -234,3 +233,6 @@ def run_parameter_sweep(sirsv_model, base_params, param1_name, param1_range, par
                     pbar.update(1)
 
     return results
+
+def seed_infection(seed_rate, t):
+    pass

@@ -1,9 +1,10 @@
+import logging
+import random
 import warnings
 
 import numpy as np
-import logging
 from tqdm import tqdm
-import random
+
 from vaxsim.plot import plot_histogram
 
 warnings.filterwarnings('ignore')
