@@ -22,6 +22,7 @@ You can alternatively manage your venv using conda if you have it installed.
 git clone https://github.com/dsih-artpark/vaxsim.git
 cd vaxsim
 conda create -n vaxsim_test python=3.11 -y
+conda activate vaxsim_test
 poetry install
 ```
 
@@ -72,12 +73,12 @@ flowchart LR;
 #### Python
 
 ```python3
-python vaxsim.py --scenario <scenario_name> --model_type <model_type>
+python run_vaxsim.py --scenario <scenario_name> --model_type <model_type>
 ```
 #### IPython
 ```
 ipython
-run vaxsim.py --scenario <scenario_name> --model_type <model_type>
+run run_vaxsim.py --scenario <scenario_name> --model_type <model_type>
 ```
 
 
@@ -87,7 +88,7 @@ run vaxsim.py --scenario <scenario_name> --model_type <model_type>
 1. To run the baseline scenario with default model. Read more in our [documentation](docs/).
 
 ```python3
-python vaxsim.py
+python run_vaxsim.py
 ```
 3. Adding and Running Custom Scenarios
 To configure your own custom run of the model, make changes to your local params.yaml file by adding a new scenario at the end of the file. 

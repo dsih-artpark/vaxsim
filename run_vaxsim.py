@@ -10,7 +10,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
-
 from vaxsim.model import sirsv_model_with_weibull_random_vaccination, sirsv_model_with_weibull_targeted_vaccination
 from vaxsim.plot import plot_model, plot_parameter_sweep, plot_waning
 from vaxsim.utils import analyse_scenarios, run_parameter_sweep
