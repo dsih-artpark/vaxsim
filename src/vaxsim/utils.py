@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 import logging
 from tqdm import tqdm
-from scipy.integrate import simps
+from scipy.integrate import simpson
 
 
 def auc_below_threshold(S, I, R, V, days, herd_threshold=0.4):
@@ -17,7 +17,7 @@ def auc_below_threshold(S, I, R, V, days, herd_threshold=0.4):
 
     # Area under the curve
     diff_below_threshold = herd_threshold - np.minimum(protected, herd_threshold)
-    auc = simps(diff_below_threshold, t)  # Integration using Simpson's rule
+    auc = simpson(diff_below_threshold, t)  # Integration using Simpson's rule
     return auc
 
 

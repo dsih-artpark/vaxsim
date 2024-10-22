@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-from utils import auc_below_threshold
+from vaxsim.utils import auc_below_threshold
 
 
 def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, start=True):

@@ -4,7 +4,7 @@ import numpy as np
 import logging
 from tqdm import tqdm
 import random
-from plot import plot_histogram
+from vaxsim.plot import plot_histogram
 
 warnings.filterwarnings('ignore')
 

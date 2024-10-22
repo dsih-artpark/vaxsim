@@ -9,12 +9,14 @@ import argparse
 import logging
 import platform
 import sys
+import os
 from datetime import datetime
 
-from model import sirsv_model_with_weibull_random_vaccination, sirsv_model_with_weibull_targeted_vaccination
-from plot import plot_parameter_sweep, plot_waning, plot_model
-from utils import analyse_scenarios, run_parameter_sweep
+from vaxsim.model import sirsv_model_with_weibull_random_vaccination, sirsv_model_with_weibull_targeted_vaccination
+from vaxsim.plot import plot_parameter_sweep, plot_waning, plot_model
+from vaxsim.utils import analyse_scenarios, run_parameter_sweep
 
+logger = logging.getLogger("vaxsim.run")
 warnings.filterwarnings('ignore')
 
 
@@ -47,6 +49,7 @@ def main():
     args = parser.parse_args()
 
     log_filename = f"output/logs/sirsv_model_{args.scenario}_{datetime.now().strftime('%Y%m%d_%H%M')}.log"
+    os.makedirs("output/logs/")
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
