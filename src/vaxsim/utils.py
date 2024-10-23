@@ -1,4 +1,5 @@
 import logging
+import random
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -234,5 +235,80 @@ def run_parameter_sweep(sirsv_model, base_params, param1_name, param1_range, par
 
     return results
 
-def seed_infection(seed_rate, t):
-    pass
+
+def seed_infection(t, seed_schedule, seed_rate):
+    """
+    Returns the number of new seeds (infections) at time t based on a predefined schedule.
+
+    Args:
+        t: Current time step (day).
+        seed_schedule: A list of days when seeding should occur.
+        seed_rate: Number of seeds (infections) to introduce at the scheduled times.
+
+    Returns:
+        new_seeds: Number of new seeds (infections) at time t.
+    """
+    if t in seed_schedule:
+        return seed_rate
+    return 0
+
+
+def generate_seed_schedule(method="random", event_series=None, days=100, min_day=0, max_day=100, S=None, I=None, R=None, V=None):
+    """
+    Generates a list of days when seeding should occur based on the selected method.
+
+    Args:
+        method: Method to generate seed schedule. Options: "random", "event_series", "local_minima".
+        event_series: A manually defined array or read from a file (binary events for seeding).
+        days: Total number of days in the simulation.
+        min_day: Minimum day for seeding (for event-based generation).
+        max_day: Maximum day for seeding (for event-based generation).
+        S: Susceptible population array (optional, for local minima method).
+        I: Infected population array (optional, for local minima method).
+        R: Recovered population array (optional, for local minima method).
+        V: Vaccinated population array (optional, for local minima method).
+
+    Returns:
+        seed_schedule: A list of days when seeding events occur.
+    """
+    if method == "random":
+        # Randomly generate seeding events
+        num_seeds = 5  # Default
+        seed_schedule = random.sample(range(min_day, days), num_seeds)
+
+    elif method == "event_series":
+        # Use manually defined event series
+        if event_series is None:
+            raise ValueError("For 'event_series' method, event_series must be specified.")
+        seed_schedule = [i for i in range(len(event_series)) if event_series[i] == 1]
+
+    elif method == "local_minima":
+        # local minima in the protected population
+        if S is None or I is None or R is None or V is None:
+            raise ValueError("For 'local_minima' method, S, I, R, and V must be provided.")
+        N = S + I + R + V
+        protected = (R + V)/(N-I)
+        seed_schedule = find_local_minima(protected, days)
+
+    else:
+        raise ValueError(f"Unknown method: {method}")
+
+    return seed_schedule
+
+
+def find_local_minima(data, days):
+    """
+    Finds local minima in a list of data points (e.g., from model output).
+
+    Args:
+        data: A list or array of data points.
+        days: Total number of days (length of data).
+
+    Returns:
+        minima_indices: A list of indices where local minima occur.
+    """
+    minima_indices = []
+    for i in range(1, days - 1):
+        if data[i - 1] > data[i] < data[i + 1]:
+            minima_indices.append(i)
+    return minima_indices

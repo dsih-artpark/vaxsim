@@ -6,6 +6,7 @@ import numpy as np
 from tqdm import tqdm
 
 from vaxsim.plot import plot_histogram
+from vaxsim.utils import generate_seed_schedule, seed_infection
 
 warnings.filterwarnings('ignore')
 
@@ -49,7 +50,8 @@ def sirsv_model_with_weibull_random_vaccination(params, scenario, random_seed=42
     logging.info(f"Starting simulation for scenario: {scenario}")
 
     for t in tqdm(range(1, days), desc=f"Running {scenario} simulation", unit="day"):
-        new_seeds = min(seed_rate, S[t-1])
+        seed_schedule = generate_seed_schedule(method='random', days=days)
+        new_seeds = min(seed_infection(t, seed_schedule, seed_rate), S[t-1])
 
         # VACCINATION ROUND
         if t == start_vax_day or (t > start_vax_day and (t - start_vax_day) % vax_period == 0):

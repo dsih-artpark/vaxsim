@@ -44,12 +44,12 @@ scenario_1b:
   weibull_shape_rec: 3
   weibull_scale_rec: 600
   days: 1100
-  seed_rate: 0
+  seed_rate: 1
   vax_period: 365
   vax_duration: 30
   start_vax_day: 1
   S0: 699999
-  I0: 1
+  I0: 0
   R0: 150000
   V0: 150000
 scenario_1c:  
