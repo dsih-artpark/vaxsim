@@ -19,7 +19,7 @@ def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, st
     plt.title(f'Decay Times for {scenario.capitalize()} - Round {round_counter} {"Beginning" if start else "End"}')
     plt.legend()
 
-    plt.text(0.95, 0.05, f"Vaccinated Count: {len(decay_times_vax)}", transform=plt.gca().transAxes, fontsize=10, horizontalalignment='center', bbox=dict(facecolor='white', alpha=0.5))  # noqa: E501
+    plt.text(0.95, 0.05, f"Vaccinated Count: {len(decay_times_vax)}", transform=plt.gca().transAxes, fontsize=10, horizontalalignment='center', bbox=dict(facecolor='white', alpha=0.5))
     file_path = f'{output_dir}/decay_times_{scenario}_round_{round_counter}_{"begin" if start else "end"}.png'
     plt.savefig(file_path)
     plt.close()
@@ -108,7 +108,7 @@ def plot_data(ax, data):
     ax2.legend(loc='upper right')
 
 
-def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots', herd_threshold=0.4):
+def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots', herd_threshold=0.416):
     os.makedirs(output_dir, exist_ok=True)
 
     t = np.arange(days) / 30  # Convert days to months
@@ -125,10 +125,10 @@ def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots
 
     plt.axhline(y=herd_threshold, color='r', linestyle='--', label='Herd Immunity Threshold')
 
-    plt.fill_between(t, protected, herd_threshold, where=(protected < herd_threshold),
+    plt.fill_between(t, protected, 1, where=(protected < herd_threshold),
                      color='red', alpha=0.3, interpolate=True, label='Region of vulnerability')
 
-    plt.text(0.05, 0.05, f'Cumulative Vulnerability: {auc:.2f} months',
+    plt.text(0.05, 0.05, f'Cumulative Vulnerability: {auc:.4f}',
              transform=plt.gca().transAxes, fontsize=12, bbox=dict(facecolor='white', alpha=0.5))
     plt.title('SIRSV Model (Immunity waning)', fontsize=16)
     plt.xlabel("Months since start of simulation", fontsize=12)
@@ -140,11 +140,11 @@ def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots
     plt.close()
 
 
-def plot_parameter_sweep(results, param1_name, param2_name, output_variable='protected', vaccine_efficacy=1, herd_threshold=0.4, model_type='random'):
+def plot_parameter_sweep(results, param1_name, param2_name, output_variable='protected', vaccine_efficacy=1, herd_threshold=0.416, model_type='random'):
     param1_values = sorted(set(result[param1_name] for result in results if result is not None))
     param2_values = sorted(set(result[param2_name] for result in results if result is not None))
 
-    output_grid = np.full((len(param1_values), len(param2_values)), np.nan)  # Use np.nan to handle skipped entries
+    output_grid = np.full((len(param1_values), len(param2_values)), np.nan)
     for result in results:
         if result is None:
             continue
