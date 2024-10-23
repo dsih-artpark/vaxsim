@@ -9,16 +9,33 @@ from scipy.integrate import simpson
 from tqdm import tqdm
 
 
-def auc_below_threshold(S, I, R, V, days, herd_threshold=0.4):
-    """Helper function to compute area under curve below threshold value for protected fraction."""
+def auc_below_threshold(S, I, R, V, days, herd_threshold=0.416):
+    """
+    Helper function to compute the normalized area under the curve below a threshold value
+    for the protected fraction, and normalize by total days.
+
+    Args:
+    S: Susceptible population array over time.
+    I: Infected population array over time.
+    R: Recovered population array over time.
+    V: Vaccinated population array over time.
+    days: Total number of days.
+    herd_threshold: Threshold for the protected fraction.
+
+    Returns:
+    auc_normalised: Area under the curve normalized by the total number of days.
+    """
     N = S + I + R + V
     protected = (R + V) / (N - I)
-    t = np.arange(days) / 30  # Convert days to months
+    t = np.arange(days) / 30
 
-    # Area under the curve
-    diff_below_threshold = herd_threshold - np.minimum(protected, herd_threshold)
-    auc = simpson(diff_below_threshold, t)  # Integration using Simpson's rule
-    return auc
+    area_above_protected = np.maximum(1 - protected, 0) * (protected < herd_threshold)
+    shaded_area = simpson(area_above_protected, x=t)
+
+    total_area = simpson(np.ones_like(protected), x=t)  # Area of the box from 0 to 1
+    percentage_shaded = (shaded_area / total_area) * 100
+
+    return percentage_shaded
 
 
 def equilibrium_min_protected_fraction(S, I, R, V):
