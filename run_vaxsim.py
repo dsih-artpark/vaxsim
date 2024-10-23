@@ -106,7 +106,7 @@ def main():
                 S, I, R, V = sirsv_model(scenario_params, args.scenario, diagnosis=True)
 
                 # Plotting depending on the scenario
-                if args.scenario != "baseline":
+                if args.scenario != "baseline" and scenario_params['seed_rate'] == 0 and scenario_params['I0'] == 0:
                     plot_waning(S, I, R, V, scenario_params['days'], scenario=args.scenario, model_type=model)
                 else:
                     plot_model(S, I, R, V, scenario_params['days'], scenario=args.scenario, model_type=model)
