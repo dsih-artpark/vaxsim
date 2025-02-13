@@ -1,4 +1,5 @@
 import logging
+import random
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -28,8 +29,8 @@ def auc_below_threshold(S, I, R, V, days, herd_threshold=0.416):
     protected = (R + V) / (N - I)
     t = np.arange(days) / 30
 
-    area_above_protected = np.maximum(1 - protected, 0) * (protected < herd_threshold)
-    shaded_area = simpson(area_above_protected, x=t)
+    area_below_threshold = np.maximum(herd_threshold - protected, 0) * (protected < herd_threshold)
+    shaded_area = simpson(area_below_threshold, x=t)
 
     total_area = simpson(np.ones_like(protected), x=t)  # Area of the box from 0 to 1
     percentage_shaded = (shaded_area / total_area) * 100
@@ -48,6 +49,65 @@ def compute_total_infections(I):
     """Helper function to compute total infections."""
     daily_infections = np.maximum(0, np.diff(I))
     return np.sum(daily_infections)
+
+
+def model_loss(S, I, R, V, data, scale_diva=0.5):
+    """
+    Calculates the loss as the sum of squared errors between model predictions
+    and seromonitoring, diva data.
+
+    Parameters:
+    ----------
+    S, I, R, V : array-like
+        Arrays representing susceptible, infected, recovered, and vaccinated populations over time.
+    scale_diva : float, optional
+        Scaling factor for DIVA predictions (default: 0.5).
+    data : pd.DataFrame
+        Data containing 'sero_eff' and 'diva' columns for serological and DIVA data.
+
+    Returns:
+    -------
+    float
+        Total loss value, or 1e6 if an error occurs.
+
+    Notes:
+    -----
+    - Predictions are based on:
+      - `sero_pred = (R + V) / (N - I)`
+      - `diva_pred = R / (N - I)`, where `N = S + I + R + V`.
+    """
+    try:
+        start_date = pd.to_datetime('2020-01-01')
+
+        valid_sero = data['sero_eff'].dropna()
+        valid_diva = data['diva'].dropna()
+        sero_days = (valid_sero.index - start_date).days.astype(int)
+        diva_days = (valid_diva.index - start_date).days.astype(int)
+
+        max_day = max(max(sero_days), max(diva_days))
+        if len(S) > max_day + 1:
+            S = S[:max_day + 1]
+            I = I[:max_day + 1]
+            R = R[:max_day + 1] 
+            V = V[:max_day + 1]
+
+        N = S + I + R + V
+        sero_pred = (R + V) / (N - I)
+        diva_pred = R / (N - I)
+
+        matched_sero = sero_pred[sero_days]
+        matched_diva = diva_pred[diva_days]
+
+        sero_error = ((valid_sero.values - matched_sero) ** 2).sum()
+        diva_error = ((scale_diva * valid_diva.values - matched_diva) ** 2).sum()
+
+        total_error = sero_error + diva_error
+        print(f"Current loss: {total_error:.6f}")
+        return total_error
+
+    except (ValueError, ZeroDivisionError, IndexError) as e:
+        print(f"Error in loss calculation: {e!s}")
+        return 1e6
 
 
 def analyse_scenarios(sirsv_model, params, output_dir='output', model_type='random'):
@@ -250,3 +310,75 @@ def run_parameter_sweep(sirsv_model, base_params, param1_name, param1_range, par
                     pbar.update(1)
 
     return results
+
+
+def seed_infection(t, seed_schedule, seed_rate=0):
+    """
+    Returns the number of new seeds (infections) at time t based on a predefined schedule.
+
+    Args:
+        t: Current time step (day).
+        seed_schedule: A list of days when seeding should occur.
+        seed_rate: Number of seeds (infections) to introduce at the scheduled times.
+
+    Returns:
+        new_seeds: Number of new seeds (infections) at time t.
+    """
+    if t in seed_schedule:
+        return seed_rate
+    return 0
+
+
+def generate_seed_schedule(method, min_day=None, max_day=None, days=None, num_seeds=None, event_series=None):
+    """
+    Generates a seed schedule based on the specified method.
+
+    Args:
+        method (str): The method for generating the schedule, either "random" or "event_series".
+        min_day (int, optional): The minimum day for seeding in the "random" method.
+        max_day (int, optional): The maximum day for seeding in the "random" method.
+        days (int, optional): Total length of the binary schedule for "random" method.
+        num_seeds (int, optional): Number of seeding events for the "random" method.
+        event_series (list of int, optional): A manually defined binary series indicating seeding days 
+                                              for the "event_series" method.
+
+    Returns:
+        list: A list of indices indicating the seeding days.
+
+    Raises:
+        ValueError: If required parameters are missing or if an invalid method is provided.
+    """
+    if method == "random":
+        if min_day is None or max_day is None or days is None or num_seeds is None:
+            raise ValueError("All parameters min_day, max_day, days, and num_seeds must be specified for 'random' method.")
+        seed_schedule = [0] * days
+        seed_days = random.sample(range(min_day, max_day), num_seeds)
+        for day in seed_days:
+            seed_schedule[day] = 1
+        return seed_schedule
+    elif method == "event_series":
+        if event_series is None:
+            raise ValueError("For 'event_series' method, event_series must be specified.")
+        seed_schedule = [i for i in range(len(event_series)) if event_series[i] == 1]
+        return seed_schedule
+    else:
+        raise ValueError("Invalid method. Choose 'random' or 'event_series'.")
+
+
+def find_local_minima(data, days):
+    """
+    Finds local minima in a list of data points and returns a binary event series.
+
+    Args:
+        data: A list or array of data points.
+        days: Total number of days (length of data).
+
+    Returns:
+        event_series: A binary list of length `days` with `1` at local minima indices and `0` elsewhere.
+    """
+    event_series = [0] * days
+    for i in range(1, days - 1):
+        if data[i - 1] > data[i] < data[i + 1]:
+            event_series[i] = 1
+    return event_series
+

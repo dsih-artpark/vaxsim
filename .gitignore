@@ -156,3 +156,4 @@ dmypy.json
 *.dbf
 *.prj
 *.log
+*.npz
