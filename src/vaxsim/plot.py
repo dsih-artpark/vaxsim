@@ -28,7 +28,7 @@ def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, st
 def plot_model(S, I, R, V, days, scenario, model_type, trajectories=None, output_dir='output/plots'):
     os.makedirs(output_dir, exist_ok=True)
 
-    data = pd.read_csv('data.csv', parse_dates=['date'], index_col='date')
+    data = pd.read_csv('data copy.csv', parse_dates=['date'], index_col='date')
     data['month'] = (data.index - data.index[0]).days / 30
 
     t = np.arange(days) / 30  # Convert days to months
@@ -50,19 +50,19 @@ def plot_model(S, I, R, V, days, scenario, model_type, trajectories=None, output
 
     infected_fraction = I / N
     axs[1].plot(t, infected_fraction, 'r-', linewidth=2, label='Infected')
-    axs[1].set_ylim(0, min(np.max(infected_fraction) * 1.1, 1))
-    axs[1].set_ylabel('Number of Confirmed Cases', color='k')
+    axs[1].set_ylim(0, max(0.1, min(np.max(infected_fraction) * 1.1, 1)))
 
     axs[2].plot(t, V / N, 'g-', linewidth=2, label='Vaccinated')
     axs[2].set_ylim(0, 1)
 
-    axs[3].plot(t, R / N, 'g-', linewidth=2, label='Recovered')
-    axs[3].plot(t, R / (N - I), 'c-', linewidth=2, label='Recovered (DIVA)')
+    # axs[3].plot(t, R / N, 'g-', linewidth=2, label='Recovered')
+    axs[3].plot(t, R / (N - I), 'c-', linewidth=2, label='Recovered (fit)')
     axs[3].set_ylim(0, 1)
 
-    plot_data(axs, data)
+    if scenario == 'baseline':
+        plot_data(axs, data)
 
-    fig.suptitle('Discrete SIRSV Model', fontsize=16)
+    # fig.suptitle('Discrete SIRSV Model', fontsize=16)
     fig.text(0.5, 0.04, "Months since start of simulation", ha='center', fontsize=12)
     fig.text(0.04, 0.5, "Fraction of population", va='center', rotation='vertical', fontsize=12)
 
@@ -82,29 +82,34 @@ def plot_model(S, I, R, V, days, scenario, model_type, trajectories=None, output
 
 def plot_data(ax, data):
     # Seromonitoring data
-    sero_data = data.dropna(subset=['sero'])
-    sero_true = sero_data['sero'].values
-    sero_months = sero_data['month'].values
-    sero_error = sero_true * 0.1  # 10% error
+    sero_data = data.dropna(subset=['sero_eff'])  # Make sure 'sero_eff' is not missing
+    if not sero_data.empty:
+        sero_eff = sero_data['sero_eff'].values  # Use the 'sero_eff' column directly
+        sero_months = sero_data['month'].values
+        sero_error = sero_eff * 0.1  # 10% error
 
-    ax[0].errorbar(sero_months, sero_true, yerr=sero_error, fmt='bo', capsize=5, label='Seromonitoring Data')
+        ax[0].errorbar(sero_months, sero_eff, yerr=sero_error, fmt='bo', capsize=5, label='Effective Protection\n(Seromonitoring and Vaccination Coverage Data)')
 
-    # Lab confirmed cases
+    # Confirmed cases with smoothing
     inf_data = data.dropna(subset=['inf_obs'])
-    inf_true = inf_data['inf_obs'].values
-    inf_months = inf_data['month'].values
+    if not inf_data.empty:
+        inf_true = inf_data['inf_obs'].rolling(window=3, min_periods=1).mean().values
+        inf_months = inf_data['month'].values
 
-    ax2 = ax[1].twinx()
-    ax2.plot(inf_months, inf_true, 'ko', markersize=3, label='Confirmed cases')
-    ax2.tick_params(axis='y', labelcolor='k')
+        ax2 = ax[1].twinx()
+        ax2.plot(inf_months, inf_true, 'ko-', markersize=3, label='Smoothed FMD Cases')
+        ax2.set_ylabel('Number of Cases', color='k')
+        ax2.tick_params(axis='y', labelcolor='k')
 
     # DIVA data
     diva_data = data.dropna(subset=['diva'])
-    diva_true = diva_data['diva'].values
-    diva_months = diva_data['month'].values
-    diva_error = diva_true * 0.1  # 10% error
+    if not diva_data.empty:
+        diva_true = diva_data['diva'].values
+        diva_months = diva_data['month'].values
+        diva_error = diva_true * 0.1  # 10% error
 
-    ax[3].errorbar(diva_months, diva_true, yerr=diva_error, fmt='mo', capsize=5, label='DIVA Data')
+        ax[3].errorbar(diva_months, diva_true, yerr=diva_error, fmt='mo', capsize=5, label='DIVA Data')
+
     ax2.legend(loc='upper right')
 
 
@@ -125,16 +130,16 @@ def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots
 
     plt.axhline(y=herd_threshold, color='r', linestyle='--', label='Herd Immunity Threshold')
 
-    plt.fill_between(t, protected, 1, where=(protected < herd_threshold),
+    plt.fill_between(t, protected, herd_threshold, where=(protected < herd_threshold),
                      color='red', alpha=0.3, interpolate=True, label='Region of vulnerability')
 
     plt.text(0.05, 0.05, f'Cumulative Vulnerability: {auc:.4f}',
              transform=plt.gca().transAxes, fontsize=12, bbox=dict(facecolor='white', alpha=0.5))
-    plt.title('SIRSV Model (Immunity waning)', fontsize=16)
+    # plt.title('SIRSV Model (Immunity waning)', fontsize=16)
     plt.xlabel("Months since start of simulation", fontsize=12)
     plt.ylabel("Fraction of population", fontsize=12)
     plt.ylim(0, 1)
-    plt.legend()
+    plt.legend(loc='upper right')
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, f'{scenario}_waning_{model_type}.png'), dpi=300, bbox_inches='tight')
     plt.close()
@@ -173,3 +178,19 @@ def plot_parameter_sweep(results, param1_name, param2_name, output_variable='pro
     plt.legend()
     plt.savefig(f'output/sweep/parameter_sweep_{param1_name}_{param2_name}_{output_variable}_{vaccine_efficacy}_{model_type}.png', dpi=300, bbox_inches='tight')
     plt.close()
+
+
+def compare_infections(scenario, model_type='random', output_dir='output/plots'):
+    input_dir = 'output/saved_variables'
+    os.makedirs(output_dir, exist_ok=True)
+    baseline_inf = np.load(f'{input_dir}/{model_type}_vaccination/baseline/baseline_simulation_results.npz')
+    scenario_inf = np.load(f'{input_dir}/{model_type}_vaccination/{scenario}/{scenario}_simulation_results.npz')
+    plt.figure(figsize=(10, 6))
+    plt.plot(baseline_inf['I'], label='Baseline')
+    plt.plot(scenario_inf['I'], label=f'{scenario}')
+    plt.xlabel('Time (days)')
+    plt.ylabel('Number of infected individuals')
+    plt.title('Comparison of infected individuals')
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend()
+    plt.savefig(f'{output_dir}/infections_comparison_{scenario}_{model_type}.png', dpi=300, bbox_inches='tight')
