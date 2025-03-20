@@ -7,6 +7,14 @@ import numpy as np
 import pandas as pd
 from scipy.integrate import simpson
 from tqdm import tqdm
+import yaml
+
+
+def load_params():
+    """Load model parameters from params.yaml."""
+    params_path = Path(__file__).parent.parent.parent / 'params.yaml'
+    with params_path.open('r') as f:
+        return yaml.safe_load(f)
 
 
 def auc_below_threshold(S, I, R, V, days, herd_threshold=0.416):
@@ -166,6 +174,7 @@ def analyse_scenarios(sirsv_model, params, output_dir='output', model_type='rand
         last_365_days = slice(-365, None)
         total_population = S[last_365_days] + I[last_365_days] + R[last_365_days] + V[last_365_days]
         protected_fraction = np.min((R[last_365_days] + V[last_365_days]) / total_population) if total_population.any() else 'NA'
+        cumulative_vulnerability = auc_below_threshold(S, I, R, V, len(I), herd_threshold=0.416)
 
         # Append results for this scenario
         vax_rate = params[scenario].get('vax_rate', 'NA')
@@ -179,11 +188,22 @@ def analyse_scenarios(sirsv_model, params, output_dir='output', model_type='rand
             remarks,
             round(total_infections, 4),
             round(infections_averted, 4) if infections_averted != 'NA' else infections_averted,
-            round(protected_fraction, 4) if protected_fraction != 'NA' else protected_fraction
+            round(protected_fraction, 4) if protected_fraction != 'NA' else protected_fraction,
+            round(cumulative_vulnerability, 4)
         ])
 
     # Create DataFrame for the results
-    columns = ['scenario.ID', 'Vax Rate (day^-1)', 'Vax Period (days)', 'I0', 'Remarks', 'Total Infections', 'Percentage of Infections Averted', 'Protected Fraction']
+    columns = [
+        'scenario.ID',
+        'Vax Rate (day^-1)',
+        'Vax Period (days)',
+        'I0',
+        'Remarks',
+        'Total Infections',
+        'Percentage of Infections Averted',
+        'Protected Fraction',
+        'Cumulative Vulnerability'
+    ]
     df_results = pd.DataFrame(results, columns=columns)
     csv_path = Path(output_dir) / 'scenario_analysis.csv'
     df_results.to_csv(csv_path, index=False)

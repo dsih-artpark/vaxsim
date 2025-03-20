@@ -9,18 +9,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import yaml
 from scipy.stats import gaussian_kde
 
 from vaxsim.model import sirsv_model_with_weibull_calibration
-from vaxsim.utils import model_loss
+from vaxsim.utils import model_loss, load_params
 
-
-def load_params():
-    """Load calibration parameters from params.yaml."""
-    params_path = Path(__file__).parent.parent.parent / 'params.yaml'
-    with params_path.open('r') as f:
-        return yaml.safe_load(f)
 
 def log_results(params, loss, iteration, log_file):
     """Log calibration results to a CSV file."""

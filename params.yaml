@@ -2,7 +2,7 @@ baseline:
   Remarks: 2021 FMD outbreak
   beta: 0.125
   gamma: 0.07
-  vax_rate: 0.00833
+  vax_rate: 0.00833  # 25% coverage
   weibull_shape_vax: 3
   weibull_scale_vax: 220
   weibull_shape_rec: 3
@@ -38,25 +38,25 @@ scenario_1b:
   Remarks: Disease-endemic state with 100% annual vaccination; Vacc starts from Day 1.
   beta: 0.125
   gamma: 0.07
-  vax_rate: 0.033
+  vax_rate: 0.0333
   weibull_shape_vax: 3
   weibull_scale_vax: 220
   weibull_shape_rec: 3
   weibull_scale_rec: 1380
   days: 1095
-  seed_rate: 1
+  seed_rate: 0
   vax_period: 365
   vax_duration: 30
   start_vax_day: 1
   S0: 58400
-  I0: 1
+  I0: 4
   R0: 0
   V0: 41600
 scenario_1c:  
   Remarks: Baseline vaccination strategy in absence of infections
   beta: 0.125
   gamma: 0.07
-  vax_rate: 0.016
+  vax_rate: 0.00833
   weibull_shape_vax: 3
   weibull_scale_vax: 220
   weibull_shape_rec: 3
@@ -89,16 +89,16 @@ scenario_2a:
   R0: 0
   V0: 41600
 scenario_2b:  
-  Remarks: Disease-endemic state with 100% bi-annual vaccination; Vacc starts from Day 1.
+  Remarks: Disease-endemic state with 50% bi-annual vaccination; Vacc starts from Day 1.
   beta: 0.125
   gamma: 0.07
-  vax_rate: 0.004
+  vax_rate: 0.004165
   weibull_shape_vax: 3
   weibull_scale_vax: 220
   weibull_shape_rec: 3
   weibull_scale_rec: 1380
   days: 1095
-  seed_rate: 0
+  seed_rate: 1
   vax_period: 180
   vax_duration: 30
   start_vax_day: 180
@@ -272,7 +272,7 @@ scenario_4d:
   Remarks: Disease-free state with continous vaccination and 0.5/365 daily coverage; Vacc starts from Day 1.
   beta: 0.125
   gamma: 0.07
-  vax_rate: 0.00137
+  vax_rate: 0.001386
   weibull_shape_vax: 3
   weibull_scale_vax: 220
   weibull_shape_rec: 3

@@ -1,10 +1,21 @@
 import os
+import sys
 
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 from vaxsim.utils import auc_below_threshold
+
+plt.rcParams.update({
+    'font.size': 14, 
+    'axes.labelsize': 14,
+    'axes.titlesize': 16,
+    'legend.fontsize': 12,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12
+})
 
 
 def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, start=True):
@@ -25,7 +36,65 @@ def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, st
     plt.close()
 
 
-def plot_model(S, I, R, V, days, scenario, model_type, trajectories=None, output_dir='output/plots'):
+def plot_model(S, I, R, V, days, scenario, model_type, output_dir='output/plots'):
+    os.makedirs(output_dir, exist_ok=True)
+
+    data = pd.read_csv('data copy.csv', parse_dates=['date'], index_col='date')
+    data['month'] = (data.index - data.index[0]).days / 30
+
+    t = np.arange(days) / 30  # Convert days to months
+    N = S + I + R + V
+
+    fig, axs = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+
+    protected = (R + V) / (N - I)
+    axs[0].plot(t, protected, color='#1b9e77', linestyle='-', linewidth=2, label='Protected Fraction (Baseline)')
+    axs[0].set_ylim(0, 1)
+    axs[0].set_ylabel("Fraction of Population")
+    axs[0].set_xlabel("Months since start of simulation")
+
+    axs[1].plot(t, R / (N - I), color='#7570b3', linestyle='-', linewidth=2, label='Recovered Fraction (Baseline)')
+    axs[1].set_xlabel("Months since start of simulation")
+
+    if scenario == 'baseline':
+        plot_data(axs, data)
+
+    for ax in axs:
+        ax.grid(True, linestyle='--', linewidth=0.5, color='#DDDDDD', alpha=0.7)
+        ax.set_xlim(0, t[-1])
+        ax.legend(loc='upper left', frameon=False)
+
+    # fig.suptitle("Discrete SIRSV Model Simulation", fontsize=16)
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, f'{scenario}_plot_{model_type}.png'), dpi=300, bbox_inches='tight')
+    plt.close()
+
+
+def plot_data(axs, data):
+    # Seromonitoring data
+    sero_data = data.dropna(subset=['sero_eff'])
+    if not sero_data.empty:
+        sero_eff = sero_data['sero_eff'].values
+        sero_months = sero_data['month'].values
+        axs[0].errorbar(sero_months, sero_eff, fmt='o', color='#d95f02', capsize=6, label='Harmonised Seromonitoring Data', alpha=0.7)
+
+        # Add vertical shading only between consecutive seromonitoring dates (consecutive months)
+        for i in range(len(sero_months) - 1):
+            # Only add shading if the next month is within ~1 month (allowing a small margin)
+            if (sero_months[i+1] - sero_months[i]) <= 1.1:
+                # Label only once for the legend
+                label = 'Vaccination Round' if i == 0 else None
+                axs[0].axvspan(sero_months[i], sero_months[i+1], color='gray', alpha=0.2, label=label)
+
+    # DIVA data
+    diva_data = data.dropna(subset=['diva'])
+    if not diva_data.empty:
+        diva_true = diva_data['diva'].values
+        diva_months = diva_data['month'].values
+        axs[1].errorbar(diva_months, diva_true, fmt='s', color='#e7298a', capsize=6, label='Serosurveillance (DIVA) Data', alpha=0.7)
+
+
+def plot_model_v0(S, I, R, V, days, scenario, model_type, trajectories=None, output_dir='output/plots'):
     os.makedirs(output_dir, exist_ok=True)
 
     data = pd.read_csv('data copy.csv', parse_dates=['date'], index_col='date')
@@ -80,26 +149,26 @@ def plot_model(S, I, R, V, days, scenario, model_type, trajectories=None, output
     plt.close()
 
 
-def plot_data(ax, data):
+def plot_data_v0(ax, data):
     # Seromonitoring data
-    sero_data = data.dropna(subset=['sero_eff'])  # Make sure 'sero_eff' is not missing
+    sero_data = data.dropna(subset=['sero_eff'])
     if not sero_data.empty:
-        sero_eff = sero_data['sero_eff'].values  # Use the 'sero_eff' column directly
+        sero_eff = sero_data['sero_eff'].values
         sero_months = sero_data['month'].values
         sero_error = sero_eff * 0.1  # 10% error
 
         ax[0].errorbar(sero_months, sero_eff, yerr=sero_error, fmt='bo', capsize=5, label='Effective Protection\n(Seromonitoring and Vaccination Coverage Data)')
 
     # Confirmed cases with smoothing
-    inf_data = data.dropna(subset=['inf_obs'])
-    if not inf_data.empty:
-        inf_true = inf_data['inf_obs'].rolling(window=3, min_periods=1).mean().values
-        inf_months = inf_data['month'].values
+    # inf_data = data.dropna(subset=['inf_obs'])
+    # if not inf_data.empty:
+    #     inf_true = inf_data['inf_obs'].rolling(window=3, min_periods=1).mean().values
+    #     inf_months = inf_data['month'].values
 
-        ax2 = ax[1].twinx()
-        ax2.plot(inf_months, inf_true, 'ko-', markersize=3, label='Smoothed FMD Cases')
-        ax2.set_ylabel('Number of Cases', color='k')
-        ax2.tick_params(axis='y', labelcolor='k')
+    #     ax2 = ax[1].twinx()
+    #     ax2.plot(inf_months, inf_true, 'ko-', markersize=3, label='Smoothed FMD Cases')
+    #     ax2.set_ylabel('Number of Cases', color='k')
+    #     ax2.tick_params(axis='y', labelcolor='k')
 
     # DIVA data
     diva_data = data.dropna(subset=['diva'])
@@ -108,9 +177,7 @@ def plot_data(ax, data):
         diva_months = diva_data['month'].values
         diva_error = diva_true * 0.1  # 10% error
 
-        ax[3].errorbar(diva_months, diva_true, yerr=diva_error, fmt='mo', capsize=5, label='DIVA Data')
-
-    ax2.legend(loc='upper right')
+        ax[1].errorbar(diva_months, diva_true, yerr=diva_error, fmt='mo', capsize=5, label='DIVA Data')
 
 
 def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots', herd_threshold=0.416):
@@ -185,12 +252,112 @@ def compare_infections(scenario, model_type='random', output_dir='output/plots')
     os.makedirs(output_dir, exist_ok=True)
     baseline_inf = np.load(f'{input_dir}/{model_type}_vaccination/baseline/baseline_simulation_results.npz')
     scenario_inf = np.load(f'{input_dir}/{model_type}_vaccination/{scenario}/{scenario}_simulation_results.npz')
-    plt.figure(figsize=(10, 6))
-    plt.plot(baseline_inf['I'], label='Baseline')
-    plt.plot(scenario_inf['I'], label=f'{scenario}')
-    plt.xlabel('Time (days)')
+
+    # Assume simulation time is in days; convert to dates starting 2020-01-01
+    num_days = baseline_inf['I'].shape[0]
+    start_date = pd.to_datetime("2020-01-01")
+    dates = start_date + pd.to_timedelta(np.arange(num_days), unit='D')
+
+    plt.figure(figsize=(16, 6))
+    plt.plot(dates, baseline_inf['I'], label='Baseline', color='red', linestyle='-')
+    plt.plot(dates, scenario_inf['I'], label='Bi-annual', color='orange', linestyle='--')
+
+    plt.xlabel('Date')
     plt.ylabel('Number of infected individuals')
-    plt.title('Comparison of infected individuals')
     plt.grid(True, linestyle='--', alpha=0.7)
-    plt.legend()
+    plt.legend(loc='upper left')
+
+    # Set x-axis ticks to every 3 months and rotate labels 45°.
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    plt.xticks(rotation=45)
     plt.savefig(f'{output_dir}/infections_comparison_{scenario}_{model_type}.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+
+def compare_cases_and_infections(scenario, model_type='random', output_dir='output/plots'):
+    """
+    Plot observed FMD cases (smoothed) in the top panel and baseline simulation infections in the
+    bottom panel. The x-axis is formatted as dates from 2020-01-01, with ticks every 3 months.
+
+    Parameters
+    ----------
+    scenario : str
+        The scenario name used to locate observed case data if needed.
+    model_type : str, optional
+        Type of vaccination model (default 'random').
+    output_dir : str, optional
+        Directory to save the figure.
+    """
+
+    # Load observed data from CSV
+    data = pd.read_csv('data copy.csv', parse_dates=['date'], index_col='date')
+    data['month'] = (data.index - data.index[0]).days / 30.0
+    inf_data = data.dropna(subset=['inf_obs'])
+    if not inf_data.empty:
+        # Unsmoothed observed values as dots
+        obs_values = inf_data['inf_obs'].values
+        inf_months = inf_data['month'].values
+        # Convert month values to dates (approximate by multiplying by 30 days)
+        start_date = pd.to_datetime("2020-01-01")
+        obs_dates = start_date + pd.to_timedelta(inf_months * 30, unit='D')
+        # Smooth confirmed cases with a rolling window (window=3, min_periods=1)
+        smoothed = inf_data['inf_obs'].rolling(window=3, min_periods=1).mean().values
+    else:
+        obs_dates = None
+        obs_values = None
+        smoothed = None
+
+    # Load baseline simulation results
+    input_dir = 'output/saved_variables'
+    baseline_inf = np.load(f'{input_dir}/{model_type}_vaccination/baseline/baseline_simulation_results.npz')
+    num_days = baseline_inf['I'].shape[0]
+    start_date = pd.to_datetime("2020-01-01")
+    sim_dates = start_date + pd.to_timedelta(np.arange(num_days), unit='D')
+
+    # Create figure with two stacked panels
+    fig, axs = plt.subplots(2, 1, figsize=(16, 10), sharex=True)
+
+    # Top panel: Observed FMD Cases (dots and smoothed line)
+    if obs_values is not None:
+        # Plot the unsmoothed observed data as dots
+        axs[0].plot(obs_dates, obs_values, 'ko', markersize=4, label='Observed Cases')
+        # Plot the smoothed line on top of the dots
+        axs[0].plot(obs_dates, smoothed, 'k-', linewidth=2, label='Smoothed Cases (window=3)')
+        axs[0].set_ylabel('Number of Cases')
+        axs[0].tick_params(axis='y')
+        axs[0].legend(loc='upper left')
+        axs[0].grid(True, linestyle='--', alpha=0.7)
+    else:
+        axs[0].text(0.5, 0.5, "No observed case data", transform=axs[0].transAxes,
+                    ha='center', fontsize=14)
+
+    # Bottom panel: Baseline Simulation Infections
+    axs[1].plot(sim_dates, baseline_inf['I'], label='Baseline',
+                color='red', linestyle='-')
+    axs[1].set_ylabel('Number of Infected Individuals')
+    axs[1].tick_params(axis='y')
+    axs[1].legend(loc='upper left')
+    axs[1].grid(True, linestyle='--', alpha=0.7)
+
+    # X-axis formatting: major ticks every 3 months, 45° rotation, date formatter.
+    axs[1].set_xlabel('Date')
+    axs[1].xaxis.set_major_locator(mdates.MonthLocator(interval=3))
+    axs[1].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    plt.xticks(rotation=45)
+
+    # plt.suptitle(f"Observed Cases and Baseline Infections for {scenario}", fontsize=16)
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+    os.makedirs(output_dir, exist_ok=True)
+    plt.savefig(f'{output_dir}/cases_and_infections_{scenario}_{model_type}.png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+
+if __name__ == "__main__":
+    # Usage: python plot.py <scenario> [<model_type>]
+    scenario = sys.argv[1] if len(sys.argv) > 1 else 'scenario_2b'
+    model_type = sys.argv[2] if len(sys.argv) > 2 else 'random'
+    compare_infections(scenario, model_type=model_type)
+    # compare_cases_and_infections(scenario, model_type=model_type)

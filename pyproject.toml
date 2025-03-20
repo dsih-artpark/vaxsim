@@ -1,41 +1,21 @@
-[tool.poetry]
+[project]
 name = "vaxsim"
 version = "0.1.0"
 description = "vaxsim is a python package for simulating the spread of Foot and Mouth Disease (FMD) using a discrete compartmental model (SIRSV framework), along with control interventions such as periodic pulsed vaccination campaigns."
-authors = ["Adish"]
-license = "MIT"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-scipy = "^1.12.0"
-numpy = "^1.26.4"
-matplotlib = "^3.8.3"
-plotly = "^5.22.0"
-seaborn = "^0.13.2"
-argparse = "^1.4.0"
-logging = "^0.4.9.6"
-tqdm = "^4.66.5"
-pathlib = "^1.0.1"
-pandas = "^2.2.3"
-
-[tool.poetry.group.dev.dependencies]
-pyaml = "^23.12.0"
-math0 = "^1.1"
-SALib = "^1.4.8"
-ipython = "^8.28.0"
-sphinx = "^8.1.3"
-sphinx-autodoc-typehints = "^3.0.1"
-sphinx-rtd-theme = "^3.0.2"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.ruff.lint]
-select = ["E", "F", "W", "I", "FLY", "RUF", "B", "ICN"]
-ignore = ["E741"]
-
-[tool.ruff]
-line-length = 200
-
+requires-python = ">=3.11"
+dependencies = [
+    "argparse>=1.4.0",
+    "ipython>=9.0.2",
+    "logging>=0.4.9.6",
+    "math0>=1.1",
+    "matplotlib>=3.10.1",
+    "numpy>=2.2.4",
+    "pandas>=2.2.3",
+    "pathlib>=1.0.1",
+    "plotly>=6.0.1",
+    "pyaml>=25.1.0",
+    "scipy>=1.15.2",
+    "seaborn>=0.13.2",
+    "tqdm>=4.67.1",
+]
