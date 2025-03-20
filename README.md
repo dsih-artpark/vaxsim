@@ -9,12 +9,22 @@
 Installation & Usage
 ---------------------
 
-You can clone vaxsim into your local environment and then install the dependencies using `poetry`. Make sure you have [Poetry](https://python-poetry.org/) installed first. You can find their official installer [here](https://python-poetry.org/docs/#installation).
+You can install vaxsim directly using `uv` without first cloning the repository.
+
+### Installation using uv
 
 ```bash
-git clone https://github.com/dsih-artpark/vaxsim.git
-cd vaxsim
-poetry install
+uv install https://github.com/dsih-artpark/vaxsim.git
+```
+
+### Using conda Environment
+
+If you prefer to use conda, first create and activate a new environment, then run the uv installation:
+
+```bash
+conda create -n vaxsim_test python=3.11 -y
+conda activate vaxsim_test
+uv install git+https://github.com/dsih-artpark/vaxsim.git
 ```
 
 You can alternatively manage your venv using conda if you have it installed.

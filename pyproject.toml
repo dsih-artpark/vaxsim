@@ -17,5 +17,6 @@ dependencies = [
     "pyaml>=25.1.0",
     "scipy>=1.15.2",
     "seaborn>=0.13.2",
+    "sphinx>=8.2.3",
     "tqdm>=4.67.1",
 ]
