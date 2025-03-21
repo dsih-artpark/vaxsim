@@ -1,5 +1,6 @@
 import logging
 import random
+import os
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -11,8 +12,30 @@ import yaml
 
 
 def load_params():
-    """Load model parameters from params.yaml."""
-    params_path = Path(__file__).parent.parent.parent / 'params.yaml'
+    """Load parameters from params.yaml file.
+    
+    Looks for params.yaml in the following locations:
+    1. Current working directory
+    2. Package directory
+    3. User's home directory
+    """
+    # Try current working directory first
+    if os.path.exists('params.yaml'):
+        params_path = Path('params.yaml')
+    # Try package directory
+    elif os.path.exists(Path(__file__).parent / 'params.yaml'):
+        params_path = Path(__file__).parent / 'params.yaml'
+    # Try home directory
+    elif os.path.exists(Path.home() / '.vaxsim/params.yaml'):
+        params_path = Path.home() / '.vaxsim/params.yaml'
+    else:
+        raise FileNotFoundError(
+            "params.yaml not found. Please ensure it exists in one of:\n"
+            "- Current working directory\n"
+            "- Package directory\n"
+            "- ~/.vaxsim/params.yaml"
+        )
+    
     with params_path.open('r') as f:
         return yaml.safe_load(f)
 

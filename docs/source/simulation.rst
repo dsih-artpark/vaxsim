@@ -106,15 +106,33 @@ Parameters are defined in ``params.yaml``:
    * - vax_rate
      - day⁻¹
      - Vaccination rate
+   * - vax_period
+     - days 
+     - Interval between vaccination rounds
+   * - vax_duration
+     - days
+     - Duration of each vaccination campaign
+   * - start_vax_day
+     - days
+     - Day to start first vaccination
    * - weibull_shape_vax
      - -
-     - Vaccine immunity waning shape
+     - Shape parameter for vaccine immunity waning
    * - weibull_scale_vax
      - days
-     - Vaccine immunity waning scale
+     - Scale parameter for vaccine immunity waning
+   * - weibull_shape_rec
+     - -
+     - Shape parameter for natural immunity waning
+   * - weibull_scale_rec
+     - days
+     - Scale parameter for natural immunity waning
    * - days
      - days
      - Simulation duration
+   * - seed_rate
+     - day⁻¹
+     - Rate of external infection seeding
    * - S0, I0, R0, V0
      - animals
      - Initial population states
@@ -125,16 +143,32 @@ Example Configuration
 .. code-block:: yaml
 
     baseline:
-        beta: 0.125          # Transmission rate
-        gamma: 0.07          # Recovery rate
-        vax_rate: 0.00833    # 25% coverage
-        weibull_shape_vax: 3
-        weibull_scale_vax: 220
-        days: 1095
-        S0: 639996
-        I0: 4
-        R0: 180000
-        V0: 180000
+        Remarks: 2021 FMD outbreak    # Scenario description
+        # Disease transmission parameters
+        beta: 0.125                   # Transmission rate
+        gamma: 0.07                   # Recovery rate
+        
+        # Vaccination parameters
+        vax_rate: 0.00833            # 25% coverage
+        vax_period: 335              # Days between vaccination rounds
+        vax_duration: 30             # Duration of vaccination campaign
+        start_vax_day: 330           # Day to start vaccination
+        
+        # Immunity waning parameters
+        weibull_shape_vax: 3         # Shape parameter for vaccine immunity
+        weibull_scale_vax: 220       # Scale parameter for vaccine immunity (days)
+        weibull_shape_rec: 3         # Shape parameter for natural immunity
+        weibull_scale_rec: 1380      # Scale parameter for natural immunity (days)
+        
+        # Simulation settings
+        days: 1095                   # Simulation duration (3 years)
+        seed_rate: 0                 # External infection seeding rate
+        
+        # Initial population states
+        S0: 639996                   # Initial susceptible
+        I0: 4                        # Initial infected
+        R0: 180000                   # Initial recovered
+        V0: 180000                   # Initial vaccinated
 
 .. _available-scenarios:
 
