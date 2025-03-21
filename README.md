@@ -9,34 +9,33 @@
 Installation & Usage
 ---------------------
 
-You can install vaxsim directly using `uv` without first cloning the repository.
-
-### Installation using uv
+### Installation from PyPI
 
 ```bash
-uv install https://github.com/dsih-artpark/vaxsim.git
+pip install vaxsim
 ```
 
-### Using conda Environment
+### Installation from GitHub
 
-If you prefer to use conda, first create and activate a new environment, then run the uv installation:
+Using `uv`:
+```bash
+uv pip install git+https://github.com/dsih-artpark/vaxsim.git
+```
 
+Using conda environment:
 ```bash
 conda create -n vaxsim_test python=3.11 -y
 conda activate vaxsim_test
-uv install git+https://github.com/dsih-artpark/vaxsim.git
+uv pip install git+https://github.com/dsih-artpark/vaxsim.git
 ```
 
-You can alternatively manage your venv using conda if you have it installed.
+For development:
 ```bash
 git clone https://github.com/dsih-artpark/vaxsim.git
 cd vaxsim
-conda create -n vaxsim_test python=3.11 -y
-conda activate vaxsim_test
-poetry install
+uv pip install -e .
 ```
 
--------------
 ### Model Description
 The SIRSV model is an epidemiological framework designed to simulate the spread of infectious diseases, with a particular focus on Foot and Mouth Disease (FMD). This model expands upon the classical SIR (Susceptible-Infectious-Recovered) framework by introducing a fourth compartment for vaccinated individuals (V), thereby considering the effects of vaccination and immunity waning on disease transmission dynamics. Unlike traditional compartmental models, this approach allows for the re-vaccination of previously vaccinated individuals during each round, while systematically tracking the immunity decay time of each individual in vaccinated state.
 
@@ -78,31 +77,31 @@ flowchart LR;
 
 ### Running model scenarios
 
-1. Run the script from the command line as follows, using python or IPython. The package comes with IPython preinstalled.
+The package provides a command-line interface to run simulations:
 
-#### Python
+```bash
+# Run with specific scenario and model type
+vaxsim --scenario <scenario_name> --model_type <model_type>
 
-```python3
-python run_vaxsim.py --scenario <scenario_name> --model_type <model_type>
+# Run baseline scenario with default settings
+vaxsim --scenario baseline --model_type random
+
+# Run parameter sweep
+vaxsim --scenario parameter_sweep --model_type random
 ```
-#### IPython
-```
-ipython
-run run_vaxsim.py --scenario <scenario_name> --model_type <model_type>
-```
 
----
+You can also use the Python API:
 
-2. To run the baseline scenario with default model. Read more in our [documentation](docs/).
+```python
+from vaxsim.utils import load_params
+from vaxsim.model import sirsv_model_with_weibull_random_vaccination
 
-```python3
-python run_vaxsim.py
+# Load parameters
+params = load_params()['baseline']
+
+# Run simulation
+S, I, R, V = sirsv_model_with_weibull_random_vaccination(params, 'baseline')
 ```
----
-3. Adding and Running Custom Scenarios
-To configure your own custom run of the model, make changes to your local params.yaml file by adding a new scenario at the end of the file. 
-For e.g., you can create scenario_5a based on a new approach you'd like to experiment with.
----
 
 List of provided scenarios are given below:
 

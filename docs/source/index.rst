@@ -14,14 +14,13 @@ Contents
 ---------
 .. toctree::
    :maxdepth: 2
-   :caption: Detailed Sections:
 
    installation
    model
    simulation
 
 Core Features
-------------
+-------------
 * SIRSV Model Implementation
 * Weibull Distribution-based Immunity Waning
 * Random and Targeted Vaccination Strategies
@@ -29,6 +28,6 @@ Core Features
 * Visualization and Analysis
 
 Getting Started
---------------
+---------------
 Check the :doc:`installation` guide to install the package, then see :doc:`simulation` for usage examples.
 

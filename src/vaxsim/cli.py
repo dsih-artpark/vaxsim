@@ -36,6 +36,7 @@ def log_system_info():
 
 
 def main():
+    """Entry point for the command line interface."""
     parser = argparse.ArgumentParser(description="Run Discrete SIRSV model simulations.")
 
     parser.add_argument("--scenario",

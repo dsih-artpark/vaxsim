@@ -11,10 +11,10 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../../src'))
 
-project = 'vaxsim'
-copyright = '2025, Adish Illikkal'
+project = 'VAXSIM'
+copyright = '2024'
 author = 'Adish Illikkal'
-release = '0.1.0'
+release = '0.1.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -23,8 +23,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
-    'sphinx_autodoc_typehints',
-    'sphinx.ext.mathjax',
+    'sphinx.ext.autosectionlabel',
+    'sphinx_rtd_theme',
 ]
 
 templates_path = ['_templates']

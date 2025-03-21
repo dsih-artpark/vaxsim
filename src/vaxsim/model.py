@@ -12,7 +12,50 @@ from vaxsim.utils import generate_seed_schedule, seed_infection
 warnings.filterwarnings('ignore')
 
 
-def sirsv_model_with_weibull_random_vaccination(params, scenario, random_seed=42, diagnosis=None, seed_method='none', event_series=None, save_variables=True):
+def sirsv_model_with_weibull_random_vaccination(params, scenario, random_seed=42, diagnosis=None, 
+                                              seed_method='none', event_series=None, save_variables=True):
+    """Simulate SIRSV model with random vaccination strategy and Weibull-distributed immunity waning.
+    
+    Parameters
+    ----------
+    params : dict
+        Model parameters including:
+        - beta : float, transmission rate
+        - gamma : float, recovery rate
+        - vax_rate : float, vaccination rate
+        - weibull_shape_vax : float, shape parameter for vaccine immunity
+        - weibull_scale_vax : float, scale parameter for vaccine immunity
+        - weibull_shape_rec : float, shape parameter for natural immunity
+        - weibull_scale_rec : float, scale parameter for natural immunity
+        - days : int, simulation duration
+        - S0, I0, R0, V0 : int, initial population states
+    scenario : str
+        Name of simulation scenario
+    random_seed : int, optional
+        Random seed for reproducibility, by default 42
+    diagnosis : bool, optional
+        Enable diagnostic plots, by default None
+    seed_method : str, optional
+        Method for seeding infections ('none', 'random', 'periodic'), by default 'none'
+    event_series : array-like, optional
+        Time series of seeding events, by default None
+    save_variables : bool, optional
+        Save simulation results to file, by default True
+
+    Returns
+    -------
+    tuple
+        (S, I, R, V) arrays containing compartment values over time
+        S : numpy.ndarray, Susceptible population
+        I : numpy.ndarray, Infected population
+        R : numpy.ndarray, Recovered population
+        V : numpy.ndarray, Vaccinated population
+    
+    Notes
+    -----
+    The random vaccination strategy selects animals randomly for re-vaccination,
+    regardless of their immunity status.
+    """
     np.random.seed(random_seed)
     random.seed(random_seed)
 
@@ -178,7 +221,50 @@ def sirsv_model_with_weibull_random_vaccination(params, scenario, random_seed=42
     return S, I, R, V
 
 
-def sirsv_model_with_weibull_targeted_vaccination(params, scenario, random_seed=42, diagnosis=None, seed_method='none', event_series=None, save_variables=True):
+def sirsv_model_with_weibull_targeted_vaccination(params, scenario, random_seed=42, diagnosis=None, 
+                                                seed_method='none', event_series=None, save_variables=True):
+    """Simulate SIRSV model with targeted vaccination strategy and Weibull-distributed immunity waning.
+    
+    Parameters
+    ----------
+    params : dict
+        Model parameters including:
+        - beta : float, transmission rate
+        - gamma : float, recovery rate
+        - vax_rate : float, vaccination rate
+        - weibull_shape_vax : float, shape parameter for vaccine immunity
+        - weibull_scale_vax : float, scale parameter for vaccine immunity
+        - weibull_shape_rec : float, shape parameter for natural immunity
+        - weibull_scale_rec : float, scale parameter for natural immunity
+        - days : int, simulation duration
+        - S0, I0, R0, V0 : int, initial population states
+    scenario : str
+        Name of simulation scenario
+    random_seed : int, optional
+        Random seed for reproducibility, by default 42
+    diagnosis : bool, optional
+        Enable diagnostic plots, by default None
+    seed_method : str, optional
+        Method for seeding infections ('none', 'random', 'periodic'), by default 'none'
+    event_series : array-like, optional
+        Time series of seeding events, by default None
+    save_variables : bool, optional
+        Save simulation results to file, by default True
+
+    Returns
+    -------
+    tuple
+        (S, I, R, V) arrays containing compartment values over time
+        S : numpy.ndarray, Susceptible population
+        I : numpy.ndarray, Infected population
+        R : numpy.ndarray, Recovered population
+        V : numpy.ndarray, Vaccinated population
+    
+    Notes
+    -----
+    The targeted vaccination strategy prioritizes animals with lowest immunity levels
+    (highest waning time) for re-vaccination.
+    """
     np.random.seed(random_seed)
     random.seed(random_seed)
 
@@ -345,22 +431,35 @@ def sirsv_model_with_weibull_targeted_vaccination(params, scenario, random_seed=
 
 
 def sirsv_model_with_weibull_calibration(params, random_seed=42):
-    """
-    Simulates the SIRSV model with Weibull-based immunity decay for calibration.
-
-    Parameters:
+    """Simulates SIRSV model with Weibull-distributed immunity waning for parameter calibration.
+    
+    A simplified version of the model used for calibrating parameters against data.
+    
+    Parameters
     ----------
     params : dict
-        Dictionary of model parameters to calibrate, including transmission rates,
-        immunity decay parameters, and vaccination rates.
+        Model parameters to calibrate including:
+        - beta : float, transmission rate
+        - gamma : float, recovery rate
+        - vax_rate : float, vaccination rate
+        - weibull_shape_vax : float, shape parameter for vaccine immunity
+        - weibull_scale_vax : float, scale parameter for vaccine immunity
+        - weibull_shape_rec : float, shape parameter for natural immunity
+        - weibull_scale_rec : float, scale parameter for natural immunity
+        - days : int, simulation duration
+        - S0, I0, R0, V0 : int, initial population states
+    random_seed : int, optional
+        Random seed for reproducibility, by default 42
 
-    Returns:
+    Returns
     -------
-    dict
-        Compartment values over time:
-        {'S': array, 'I': array, 'R': array, 'V': array}.
+    tuple
+        (S, I, R, V) arrays containing compartment values over time
+        S : numpy.ndarray, Susceptible population
+        I : numpy.ndarray, Infected population
+        R : numpy.ndarray, Recovered population
+        V : numpy.ndarray, Vaccinated population
     """
-
     np.random.seed(random_seed)
     random.seed(random_seed)
 

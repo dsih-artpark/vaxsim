@@ -60,29 +60,37 @@ def compute_total_infections(I):
 
 
 def model_loss(S, I, R, V, data, scale_diva=0.5):
-    """
-    Calculates the loss as the sum of squared errors between model predictions
-    and seromonitoring, diva data.
+    """Calculate loss between model predictions and observed data.
 
-    Parameters:
-    ----------
-    S, I, R, V : array-like
-        Arrays representing susceptible, infected, recovered, and vaccinated populations over time.
-    scale_diva : float, optional
-        Scaling factor for DIVA predictions (default: 0.5).
+    This function computes the sum of squared errors between model predictions
+    and seromonitoring/DIVA data.
+
+    Args
+    ----
+    S : array-like
+        Susceptible population over time
+    I : array-like
+        Infected population over time
+    R : array-like
+        Recovered population over time
+    V : array-like
+        Vaccinated population over time
     data : pd.DataFrame
-        Data containing 'sero_eff' and 'diva' columns for serological and DIVA data.
+        Data containing 'sero_eff' and 'diva' columns
+    scale_diva : float, optional
+        Scaling factor for DIVA predictions, by default 0.5
 
-    Returns:
+    Returns
     -------
     float
-        Total loss value, or 1e6 if an error occurs.
+        Total loss value (or 1e6 if error occurs)
 
-    Notes:
-    -----
-    - Predictions are based on:
-      - `sero_pred = (R + V) / (N - I)`
-      - `diva_pred = R / (N - I)`, where `N = S + I + R + V`.
+    Note
+    ----
+    Predictions are calculated as:
+    - sero_pred = (R + V) / (N - I)
+    - diva_pred = R / (N - I)
+    where N = S + I + R + V
     """
     try:
         start_date = pd.to_datetime('2020-01-01')

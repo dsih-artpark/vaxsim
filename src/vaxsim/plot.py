@@ -19,6 +19,25 @@ plt.rcParams.update({
 
 
 def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, start=True):
+    """Plot histogram of immunity decay times for vaccinated and recovered populations.
+
+    Parameters
+    ----------
+    decay_times_vax : array-like
+        Decay times for vaccinated population
+    decay_times_rec : array-like
+        Decay times for recovered population
+    scenario : str
+        Name of simulation scenario
+    round_counter : int
+        Current vaccination round number
+    start : bool, optional
+        If True, plots beginning of round, if False, end of round
+
+    Notes
+    -----
+    Saves plot to: output/diagnosis/{scenario}/decay_times_{scenario}_round_{round}_[begin|end].png
+    """
     output_dir = f'output/diagnosis/{scenario}'
     os.makedirs(output_dir, exist_ok=True)
 
@@ -37,6 +56,25 @@ def plot_histogram(decay_times_vax, decay_times_rec, scenario, round_counter, st
 
 
 def plot_model(S, I, R, V, days, scenario, model_type, output_dir='output/plots'):
+    """Plot SIRSV model simulation results showing protected and recovered fractions.
+
+    Parameters
+    ----------
+    S, I, R, V : numpy.ndarray
+        Time series of population in each compartment
+    days : int
+        Simulation duration in days
+    scenario : str
+        Name of simulation scenario
+    model_type : str
+        Type of vaccination strategy ('random' or 'targeted')
+    output_dir : str, optional
+        Output directory for plots
+
+    Notes
+    -----
+    Saves plot to: output/plots
+    """
     os.makedirs(output_dir, exist_ok=True)
 
     data = pd.read_csv('data copy.csv', parse_dates=['date'], index_col='date')
@@ -71,6 +109,27 @@ def plot_model(S, I, R, V, days, scenario, model_type, output_dir='output/plots'
 
 
 def plot_data(axs, data):
+    """Add observed data points to model comparison plots.
+
+    Parameters
+    ----------
+    axs : list of matplotlib.axes.Axes
+        List of two axes for plotting protected and recovered fractions
+    data : pandas.DataFrame
+        Data frame containing:
+        - sero_eff : Seromonitoring effectiveness data
+        - diva : DIVA test results
+        - month : Time points in months since start
+
+    Notes
+    -----
+    Adds two types of data points:
+    - Harmonised Seromonitoring Data to first subplot
+    - Serosurveillance (DIVA) Data to second subplot
+    
+    Also adds shaded regions between consecutive vaccination rounds
+    when seromonitoring data points are within ~1 month of each other.
+    """
     # Seromonitoring data
     sero_data = data.dropna(subset=['sero_eff'])
     if not sero_data.empty:
@@ -181,6 +240,28 @@ def plot_data_v0(ax, data):
 
 
 def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots', herd_threshold=0.416):
+    """Plot immunity waning analysis showing protected fraction and vulnerability regions.
+
+    Parameters
+    ----------
+    S, I, R, V : numpy.ndarray
+        Time series of population in each compartment
+    days : int
+        Simulation duration in days
+    scenario : str
+        Name of simulation scenario
+    model_type : str
+        Type of vaccination strategy
+    output_dir : str, optional
+        Output directory for plots
+    herd_threshold : float, optional
+        Herd immunity threshold (default: 0.416)
+
+    Notes
+    -----
+    Saves plot to: output/plots
+    Shows regions where protection falls below herd immunity threshold.
+    """
     os.makedirs(output_dir, exist_ok=True)
 
     t = np.arange(days) / 30  # Convert days to months
@@ -212,7 +293,29 @@ def plot_waning(S, I, R, V, days, scenario, model_type, output_dir='output/plots
     plt.close()
 
 
-def plot_parameter_sweep(results, param1_name, param2_name, output_variable='protected', vaccine_efficacy=1, herd_threshold=0.416, model_type='random'):
+def plot_parameter_sweep(results, param1_name, param2_name, output_variable='protected', 
+                        vaccine_efficacy=1, herd_threshold=0.416, model_type='random'):
+    """Plot parameter sweep results as a heatmap with threshold indicators.
+
+    Parameters
+    ----------
+    results : list of dict
+        List of simulation results with parameter combinations
+    param1_name, param2_name : str
+        Names of parameters being swept
+    output_variable : str, optional
+        Variable to plot (default: 'protected')
+    vaccine_efficacy : float, optional
+        Vaccine efficacy factor (default: 1)
+    herd_threshold : float, optional
+        Herd immunity threshold (default: 0.416)
+    model_type : str, optional
+        Type of vaccination strategy (default: 'random')
+
+    Notes
+    -----
+    Saves plot to: output/sweep/parameter_sweep_{param1}_{param2}_{output_variable}_{efficacy}_{model_type}.png
+    """
     param1_values = sorted(set(result[param1_name] for result in results if result is not None))
     param2_values = sorted(set(result[param2_name] for result in results if result is not None))
 
@@ -248,6 +351,22 @@ def plot_parameter_sweep(results, param1_name, param2_name, output_variable='pro
 
 
 def compare_infections(scenario, model_type='random', output_dir='output/plots'):
+    """Compare infection dynamics between baseline and scenario simulations.
+
+    Parameters
+    ----------
+    scenario : str
+        Name of scenario to compare with baseline
+    model_type : str, optional
+        Type of vaccination strategy (default: 'random')
+    output_dir : str, optional
+        Output directory for plots
+
+    Notes
+    -----
+    Saves plot to: {output_dir}/infections_comparison_{scenario}_{model_type}.png
+    Loads data from: output/saved_variables/{model_type}_vaccination/
+    """
     input_dir = 'output/saved_variables'
     os.makedirs(output_dir, exist_ok=True)
     baseline_inf = np.load(f'{input_dir}/{model_type}_vaccination/baseline/baseline_simulation_results.npz')
@@ -277,20 +396,24 @@ def compare_infections(scenario, model_type='random', output_dir='output/plots')
 
 
 def compare_cases_and_infections(scenario, model_type='random', output_dir='output/plots'):
-    """
-    Plot observed FMD cases (smoothed) in the top panel and baseline simulation infections in the
-    bottom panel. The x-axis is formatted as dates from 2020-01-01, with ticks every 3 months.
+    """Compare observed FMD cases with simulated infections.
 
     Parameters
     ----------
     scenario : str
-        The scenario name used to locate observed case data if needed.
+        Name of scenario for comparison
     model_type : str, optional
-        Type of vaccination model (default 'random').
+        Type of vaccination strategy (default: 'random')
     output_dir : str, optional
-        Directory to save the figure.
-    """
+        Output directory for plots
 
+    Notes
+    -----
+    Saves plot to: {output_dir}/cases_and_infections_{scenario}_{model_type}.png
+    Loads data from: 
+    - data copy.csv (observed cases)
+    - output/saved_variables/{model_type}_vaccination/baseline/
+    """
     # Load observed data from CSV
     data = pd.read_csv('data copy.csv', parse_dates=['date'], index_col='date')
     data['month'] = (data.index - data.index[0]).days / 30.0

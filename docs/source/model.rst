@@ -17,7 +17,7 @@ Immunity Waning
 Weibull distribution is used to generate decay times for immunity in the vaccinated population. This distribution is characterised by two parameters: shape (k) and scale (lambda). The shape parameter determines the rate of decay, while the scale parameter determines the overall duration of immunity. By incorporating this distribution, the model can simulate the gradual loss of immunity over time, reflecting the real-world scenario of immunity waning post-vaccination.
 
 Re-vaccination Strategies
--------------------
+-------------------------
 1. Random Vaccination
    * Random selection of animals for vaccination
    * Uniform coverage across population
