@@ -1,6 +1,6 @@
 """VAXSIM: FMD Vaccination Strategy Simulator"""
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 from . import model
 from . import plot

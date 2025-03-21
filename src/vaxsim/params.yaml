@@ -1,0 +1,319 @@
+baseline:
+  Remarks: 2021 FMD outbreak
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.00833  # 25% coverage
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 335
+  vax_duration: 30
+  start_vax_day: 330
+  S0: 639996
+  I0: 4
+  R0: 180000
+  V0: 180000
+scenario_1a:   
+  Remarks: Disease-free state with 100% annual vaccination starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.0333
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 365
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_1b:  
+  Remarks: Disease-endemic state with 100% annual vaccination; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.0333
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 365
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 4
+  R0: 0
+  V0: 41600
+scenario_1c:  
+  Remarks: Baseline vaccination strategy in absence of infections
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.00833
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 365
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_2a:   
+  Remarks: Disease-free state with 100% bi-annual vaccination; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.033
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 180
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_2b:  
+  Remarks: Disease-endemic state with 50% bi-annual vaccination; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.004165
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 1
+  vax_period: 180
+  vax_duration: 30
+  start_vax_day: 180
+  S0: 639996
+  I0: 4
+  R0: 180000
+  V0: 180000
+scenario_2c:  
+  Remarks: Disease-free state with 50% bi-annual vaccination; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.01666
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 180
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_2d:  
+  Remarks: Disease-free state with 25% bi-annual vaccination; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.00833
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 180
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_3a:   
+  Remarks: Disease-free state with tri-annual vaccination and 66% coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.022
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 120
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_3b:  
+  Remarks: Disease-endemic state with tri-annual vaccination and 66% coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.022
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 1
+  vax_period: 120
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_3c:   
+  Remarks: Disease-free state with tri-annual vaccination and 33% coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.011
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 120
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_3d:   
+  Remarks: Disease-free state with tri-annual vaccination and 16.6% coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.0055
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 120
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_4a:   
+  Remarks: Disease-free state with continous vaccination and 2/365 daily coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.00556
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 30
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_4b:  
+  Remarks: Disease-endemic state with continous vaccination and 2/365 daily coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.00556
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 1
+  vax_period: 30
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_4c:   
+  Remarks: Disease-free state with continous vaccination and 1/365 daily coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.00273970
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 30
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+scenario_4d:   
+  Remarks: Disease-free state with continous vaccination and 0.5/365 daily coverage; Vacc starts from Day 1.
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.001386
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 30
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+sweep:   
+  Remarks: Parameter sweep
+  beta: 0.125
+  gamma: 0.07
+  vax_rate: 0.0333
+  weibull_shape_vax: 3
+  weibull_scale_vax: 220
+  weibull_shape_rec: 3
+  weibull_scale_rec: 1380
+  days: 1095
+  seed_rate: 0
+  vax_period: 30
+  vax_duration: 30
+  start_vax_day: 1
+  S0: 58400
+  I0: 0
+  R0: 0
+  V0: 41600
+bounds:
+  beta: [0.05, 0.2]
+  gamma: [0.05, 0.8]
+  vax_rate: [0.005, 0.01]
+  weibull_shape_vax: [2, 5]
+  weibull_scale_vax: [100, 300]
+  weibull_shape_rec: [2,5]
+  weibull_scale_rec: [900, 1500]
+  S0: [599900, 699999]
+  I0: [1, 100]
+  R0: [100000, 150000]
+  V0: [100000, 150000]
+  scale_diva: [0.01, 1.0]
