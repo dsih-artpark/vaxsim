@@ -9,24 +9,33 @@
 Installation & Usage
 ---------------------
 
-You can clone vaxsim into your local environment and then install the dependencies using `poetry`. Make sure you have [Poetry](https://python-poetry.org/) installed first. You can find their official installer [here](https://python-poetry.org/docs/#installation).
+### Installation from PyPI
 
 ```bash
-git clone https://github.com/dsih-artpark/vaxsim.git
-cd vaxsim
-poetry install
+pip install vaxsim
 ```
 
-You can alternatively manage your venv using conda if you have it installed.
+### Installation from GitHub
+
+Using `uv`:
 ```bash
-git clone https://github.com/dsih-artpark/vaxsim.git
-cd vaxsim
+uv pip install git+https://github.com/dsih-artpark/vaxsim.git
+```
+
+Using conda environment:
+```bash
 conda create -n vaxsim_test python=3.11 -y
 conda activate vaxsim_test
-poetry install
+uv pip install git+https://github.com/dsih-artpark/vaxsim.git
 ```
 
--------------
+For development:
+```bash
+git clone https://github.com/dsih-artpark/vaxsim.git
+cd vaxsim
+uv pip install -e .
+```
+
 ### Model Description
 The SIRSV model is an epidemiological framework designed to simulate the spread of infectious diseases, with a particular focus on Foot and Mouth Disease (FMD). This model expands upon the classical SIR (Susceptible-Infectious-Recovered) framework by introducing a fourth compartment for vaccinated individuals (V), thereby considering the effects of vaccination and immunity waning on disease transmission dynamics. Unlike traditional compartmental models, this approach allows for the re-vaccination of previously vaccinated individuals during each round, while systematically tracking the immunity decay time of each individual in vaccinated state.
 
@@ -68,33 +77,33 @@ flowchart LR;
 
 ### Running model scenarios
 
-1. Run the script from the command line as follows, using python or IPython. The package comes with IPython preinstalled.
+The package provides a command-line interface to run simulations:
 
-#### Python
+```bash
+# Run with specific scenario and model type
+vaxsim --scenario <scenario_name> --model_type <model_type>
 
-```python3
-python run_vaxsim.py --scenario <scenario_name> --model_type <model_type>
+# Run baseline scenario with default settings
+vaxsim --scenario baseline --model_type random
+
+# Run parameter sweep
+vaxsim --scenario parameter_sweep --model_type random
 ```
-#### IPython
+
+You can also use the Python API:
+
+```python
+from vaxsim.utils import load_params
+from vaxsim.model import sirsv_model_with_weibull_random_vaccination
+
+# Load parameters
+params = load_params()['baseline']
+
+# Run simulation
+S, I, R, V = sirsv_model_with_weibull_random_vaccination(params, 'baseline')
 ```
-ipython
-run run_vaxsim.py --scenario <scenario_name> --model_type <model_type>
-```
 
-
-
----
-
-1. To run the baseline scenario with default model. Read more in our [documentation](docs/).
-
-```python3
-python run_vaxsim.py
-```
-3. Adding and Running Custom Scenarios
-To configure your own custom run of the model, make changes to your local params.yaml file by adding a new scenario at the end of the file. 
-For e.g., you can create scenario_5a based on a new approach you'd like to experiment with.
----
-4. List of provided scenarios are given below:
+List of provided scenarios are given below:
 
 | Scenario Name | Remarks |
 |----------------|---------|
@@ -114,13 +123,36 @@ For e.g., you can create scenario_5a based on a new approach you'd like to exper
 | scenario_4b    | Disease-endemic state with continuous vaccination and 2/365 daily coverage; Vacc starts from Day 1. |
 | scenario_4c    | Disease-free state with continuous vaccination and 1/365 daily coverage; Vacc starts from Day 1. |
 | scenario_4d    | Disease-free state with continuous vaccination and 0.5/365 daily coverage; Vacc starts from Day 1. |
-| sweep          | Parameter sweep |
+| parameter_sweep          | The parameter sweep evaluates combinations of vaccination rate and period, visualised in a heatmap where colour represents the output analysis function value for each pair. |
 
 There are two model types, each based on distinct assumptions regarding the vaccination approach:
 
-1. **Random Vaccination Campaign:** In this model, previously vaccinated animals are selected randomly, and their time to immunity decay is updated according to a Weibull distribution.
+* **Random Vaccination Campaign:** In this model, previously vaccinated animals are selected randomly, and their time to immunity decay is updated according to a Weibull distribution.
 
-2. **Targeted Vaccination Campaign:** This model involves selecting previously vaccinated animals in ascending order of their time to immunity decay until the vaccination coverage for that round is achieved. Their time to immunity decay is also updated based on a Weibull distribution.
+* **Targeted Vaccination Campaign:** This model involves selecting previously vaccinated animals in ascending order of their time to immunity decay until the vaccination coverage for that round is achieved. Their time to immunity decay is also updated based on a Weibull distribution.
+
+---
+
+4. Parameter sweep
+
+The parameter sweep performs a parameter sweep on a given SIRSV model by exploring combinations of two parameters and analysing the results using a specified function (e.g., AUC or equilibrium minimum protected fraction). The sweep can either be a diagonal sweep, where the two parameters are equal, or a full sweep where both parameters vary independently. 
+
+To perform the parameter sweep:
+```python3
+python run_vaxsim.py --scenario parameter_sweep --model_type <model_type>
+```
+
+To customise the inputs and output function in parameter sweep, you can modify the invocation of the `run_parameter_sweep` function in `run_vaxsim.py` file.
+
+Output functions are:
+* AUC: Measures the area under the curve when the protected fraction of the population is below the Herd Immunity Threshold (HIT).
+* Equilibrium minimum protected fraction: Measures the minimum fraction of the population that remains protected at equilibrium, which helps evaluate long-term disease control.
+
+---
+
+### Seeding Infection
+
+To seed infections
 
 ### Output
 The results of the simulations, including log files and visualisations, will be saved in the *`output`*  directory. Check the relevant subdirectories for logs and plots corresponding to each simulation run.

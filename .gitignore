@@ -141,7 +141,7 @@ dmypy.json
 # MacOS
 .DS_Store
 
-# Data file types
+# Data file types (ignore .csv files)
 *.csv
 *.txt
 *.xlsx
@@ -156,3 +156,59 @@ dmypy.json
 *.dbf
 *.prj
 *.log
+*.npz
+
+# Ignore build output (generated files)
+docs/_build/
+docs/*.html
+docs/*.doctree
+docs/*.pickle
+docs/*.css
+docs/*.js
+docs/*.png
+docs/*.jpg
+docs/*.jpeg
+docs/*.gif
+docs/*.svg
+
+# Ignore temporary files
+*.bak
+*.swp
+*.log
+.tox/
+.nox/
+.coverage
+.ipynb_checkpoints/
+
+# Ignore miscellaneous files
+*.rst~
+*.orig
+*.aux
+*.out
+
+# MacOS Finder files
+.DS_Store
+
+# Python bytecode files and caches
+**/__pycache__/
+
+# Ignore specific IDE and environment files
+.idea/
+.vscode/
+env/
+venv/
+
+# Ignore environment-specific files (e.g., virtual environments)
+*.env
+*.venv
+
+# Do NOT ignore documentation files you need:
+# Source files (e.g., .rst, .md, .txt)
+!docs/*.rst
+!docs/*.md
+!docs/*.txt
+
+# Keep configuration files (conf.py, Makefile, requirements.txt)
+!docs/conf.py
+!docs/Makefile
+!docs/requirements.txt
