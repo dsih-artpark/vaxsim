@@ -21,7 +21,30 @@ warnings.filterwarnings('ignore')
 
 
 def load_params():
-    params_path = Path(__file__).parent / 'params.yaml'
+    """Load parameters from params.yaml file.
+    
+    Looks for params.yaml in the following locations:
+    1. Current working directory
+    2. Package directory
+    3. User's home directory
+    """
+    # Try current working directory first
+    if os.path.exists('params.yaml'):
+        params_path = Path('params.yaml')
+    # Try package directory
+    elif os.path.exists(Path(__file__).parent / 'params.yaml'):
+        params_path = Path(__file__).parent / 'params.yaml'
+    # Try home directory
+    elif os.path.exists(Path.home() / '.vaxsim/params.yaml'):
+        params_path = Path.home() / '.vaxsim/params.yaml'
+    else:
+        raise FileNotFoundError(
+            "params.yaml not found. Please ensure it exists in one of:\n"
+            "- Current working directory\n"
+            "- Package directory\n"
+            "- ~/.vaxsim/params.yaml"
+        )
+    
     with params_path.open('r') as f:
         return yaml.safe_load(f)
 
@@ -33,6 +56,29 @@ def log_system_info():
     logging.info(f"Python version: {sys.version}")
     logging.info(f"Numpy version: {np.__version__}")
     logging.info(f"Pandas version: {pd.__version__}")
+
+
+def parse_seed_infection(value):
+    """Parse seed infection argument in format 'method:rate'.
+    
+    Parameters
+    ----------
+    value : str
+        String in format 'method:rate' (e.g., 'random:10')
+        
+    Returns
+    -------
+    tuple
+        (method, rate) where method is str and rate is int
+    """
+    try:
+        method, rate = value.split(":") if ":" in value else (value, "0")
+        rate = int(rate)
+        if method not in ["random", "brute", "event_series", "none"]:
+            raise ValueError("Invalid seed method.")
+        return method, rate
+    except ValueError as err:
+        raise argparse.ArgumentTypeError("Seed infection format must be 'method:rate', e.g., 'random:10'") from err
 
 
 def main():
@@ -49,16 +95,6 @@ def main():
 
     parser.add_argument("--model_type", choices=["targeted", "random"], default="random",
                         help="Select the model type to run. Default is 'random'.")
-
-    def parse_seed_infection(value):
-        try:
-            method, rate = value.split(":") if ":" in value else (value, "0")
-            rate = int(rate)
-            if method not in ["random", "brute", "event_series", "none"]:
-                raise ValueError("Invalid seed method.")
-            return method, rate
-        except ValueError as err:
-            raise argparse.ArgumentTypeError("Seed infection format must be 'method:rate', e.g., 'random:10'") from err
 
     parser.add_argument("--seed_infection", type=parse_seed_infection, default=("none", 0),
                         help="Select the seed method (random, brute, event_series, none) and rate (integer) for importing external infections, formatted as 'method:rate'. Example: 'random:10'. Default is 'none:0'.")

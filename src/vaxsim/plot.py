@@ -314,8 +314,11 @@ def plot_parameter_sweep(results, param1_name, param2_name, output_variable='pro
 
     Notes
     -----
-    Saves plot to: output/sweep/parameter_sweep_{param1}_{param2}_{output_variable}_{efficacy}_{model_type}.png
+    Saves plot to: output/sweep/
     """
+    output_dir = 'output/sweep'
+    os.makedirs(output_dir, exist_ok=True)
+
     param1_values = sorted(set(result[param1_name] for result in results if result is not None))
     param2_values = sorted(set(result[param2_name] for result in results if result is not None))
 

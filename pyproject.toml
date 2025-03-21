@@ -4,27 +4,33 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vaxsim"
-version = "0.1.1"
+version = "0.1.2"
 description = "vaxsim is a python package for simulating the spread of Foot and Mouth Disease (FMD) using a discrete compartmental model (SIRSV framework), along with control interventions such as periodic pulsed vaccination campaigns."
 readme = "README.md"
 requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Adish Illikkal", email = "adish@artpark.in"}
+]
 dependencies = [
-    "argparse>=1.4.0",
-    "ipython>=9.0.2",
     "matplotlib>=3.10.1",
     "numpy>=2.2.4",
     "pandas>=2.2.3",
-    "pathlib>=1.0.1",
-    "plotly>=6.0.1",
     "PyYAML>=6.0.1",
     "scipy>=1.15.2",
     "seaborn>=0.13.2",
+    "tqdm>=4.67.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ipython>=9.0.2",
     "sphinx>=8.2.3",
     "sphinx-rtd-theme>=3.0.2",
     "sphinx-autodoc-typehints>=1.25.2",
-    "sphinx-automodapi>=0.16.0",
-    "sphinxcontrib-napoleon>=0.7",
-    "tqdm>=4.67.1",
+    "pytest-mpl>=0.16.1",
 ]
 
 [project.scripts]
@@ -32,6 +38,9 @@ vaxsim = "vaxsim.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+vaxsim = ["params.yaml"]
 
 [tool.uv]
 package = true
